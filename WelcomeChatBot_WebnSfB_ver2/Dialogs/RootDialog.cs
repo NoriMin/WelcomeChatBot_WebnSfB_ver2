@@ -19,16 +19,17 @@ namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
         public static string json = "";
         public static string convert = "";
         public static dynamic httpResponseJson = "";
-        private const string SuggestMessage = @"質問したいキーワードをスペース区切りで入力してください。
+        private const string SuggestMessage = @"こんにちは！
+                                                質問したいキーワードをスペース区切りで入力してください。
                                                 入力例: リシテア 締め";
         public Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
+            context.Wait(HelloMessage);
 
             return Task.CompletedTask;
         }
 
-        private async Task HelloMessage(IDialogContext context)
+        private async Task HelloMessage(IDialogContext context, IAwaitable<object> result)
         {
             await context.PostAsync(SuggestMessage);
 
@@ -215,9 +216,10 @@ namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
 
             if (convert == "1")
             {
-                await context.PostAsync("ご利用ありがとうございました。");
+                await context.PostAsync("ご利用ありがとうございました。またご利用の際はお声がけください。");
 
-                await HelloMessage(context);
+                //await HelloMessage(context);
+                await StartAsync(context);
             }
             else if (convert == "2")
             {
@@ -235,9 +237,10 @@ namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
             //var activity = context.Activity as Microsoft.Bot.Connector.Activity;
             //Trace.TraceInformation($"{activity.Text}");
 
-            await context.PostAsync("フィードバックありがとうございます。");
+            await context.PostAsync("フィードバックありがとうございます。またご利用の際はお声がけください。");
 
-            await HelloMessage(context);
+            //await HelloMessage(context);
+            await StartAsync(context);
 
         }
     }

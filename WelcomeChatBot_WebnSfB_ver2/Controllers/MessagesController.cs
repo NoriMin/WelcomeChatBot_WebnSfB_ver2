@@ -4,6 +4,7 @@ using Microsoft.Bot.Builder.Dialogs.Internals;
 using Microsoft.Bot.Connector;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -17,72 +18,49 @@ namespace WelcomeChatBot_WebnSfB_ver2
     {
         /// <summary>
         /// POST: api/Messages
-        /// receive a message from a user and send replies
+        /// Receive a message from a user and reply to it
         /// </summary>
-        /// <param name="activity"></param>
-
-        private const string WelcomeMessage = @"こんにちは。チャットボット(仮)です。
-                                                (人事、総務、工場設備、システム、＊＊＊)に関する質問に答えることが出来ます。";
-        private const string SuggestMessage = @"質問したいキーワードをスペース区切りで入力してください。
-                                                入力例: リシテア 締め";
-
-        [ResponseType(typeof(void))]
-        public virtual async Task<HttpResponseMessage> Post([FromBody] Microsoft.Bot.Connector.Activity activity)
+        public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
-
-            if (activity != null)
+            if (activity.Type == ActivityTypes.Message)
             {
-                // one of these will have an interface and process it
-                switch (activity.GetActivityType())
-                {
-                    case ActivityTypes.Message:
-
-                        //We start with the root dialog
-                        await Conversation.SendAsync(activity, () => new RootDialog());
-
-
-                        break;
-
-                    case ActivityTypes.ConversationUpdate:
-
-                        IConversationUpdateActivity update = activity;
-                        using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, activity))
-                        {
-                            var client = scope.Resolve<IConnectorClient>();
-                            if (update.MembersAdded.Any())
-                            {
-                                var reply = activity.CreateReply();
-                                foreach (var newMember in update.MembersAdded)
-                                {
-                                    if (newMember.Id != activity.Recipient.Id)
-                                    {
-                                        //reply.Text = $"こんにちは {newMember.Name} さん!";
-                                        reply.Text = WelcomeMessage;
-                                        await client.Conversations.ReplyToActivityAsync(reply);
-                                        reply.Text = SuggestMessage;
-                                        await client.Conversations.ReplyToActivityAsync(reply);
-                                    }
-
-                                }
-                            }
-                        }
-
-                        break;
-
-
-                    case ActivityTypes.ContactRelationUpdate:
-
-                    //Utility.savetodatabase("Start Of ActivityType.ContactRelationUpdate ", null, activity.From.Id, "Trace");
-
-                    case ActivityTypes.Typing:
-                    case ActivityTypes.DeleteUserData:
-                    case ActivityTypes.Ping:
-                    default:
-                        Trace.TraceError($"Unknown activity type ignored: {activity.GetActivityType()}");
-                        break;
-                }
+                await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
             }
-            return new HttpResponseMessage(System.Net.HttpStatusCode.Accepted);
+            else
+            {
+                HandleSystemMessage(activity);
+            }
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            return response;
+        }
+
+        private Activity HandleSystemMessage(Activity message)
+        {
+            if (message.Type == ActivityTypes.DeleteUserData)
+            {
+                // Implement user deletion here
+                // If we handle user deletion, return a real message
+            }
+            else if (message.Type == ActivityTypes.ConversationUpdate)
+            {
+                // Handle conversation state changes, like members being added and removed
+                // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
+                // Not available in all channels
+            }
+            else if (message.Type == ActivityTypes.ContactRelationUpdate)
+            {
+                // Handle add/remove from contact lists
+                // Activity.From + Activity.Action represent what happened
+            }
+            else if (message.Type == ActivityTypes.Typing)
+            {
+                // Handle knowing tha the user is typing
+            }
+            else if (message.Type == ActivityTypes.Ping)
+            {
+            }
+
+            return null;
         }
     }
 }
