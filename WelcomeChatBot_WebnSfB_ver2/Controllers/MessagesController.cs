@@ -1,15 +1,9 @@
-﻿using Autofac;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Builder.Dialogs.Internals;
-using Microsoft.Bot.Connector;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.Bot.Connector;
+using Microsoft.Bot.Builder.Dialogs;
 using System.Web.Http.Description;
-using WelcomeChatBot_WebnSfB_ver2.Dialogs;
+using System.Net.Http;
 
 namespace WelcomeChatBot_WebnSfB_ver2
 {
@@ -18,11 +12,14 @@ namespace WelcomeChatBot_WebnSfB_ver2
     {
         /// <summary>
         /// POST: api/Messages
-        /// Receive a message from a user and reply to it
+        /// receive a message from a user and send replies
         /// </summary>
-        public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
+        /// <param name="activity"></param>
+        [ResponseType(typeof(void))]
+        public virtual async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
-            if (activity.Type == ActivityTypes.Message)
+            // check if activity is of type message
+            if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
             {
                 await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
             }
@@ -30,8 +27,7 @@ namespace WelcomeChatBot_WebnSfB_ver2
             {
                 HandleSystemMessage(activity);
             }
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            return response;
+            return new HttpResponseMessage(System.Net.HttpStatusCode.Accepted);
         }
 
         private Activity HandleSystemMessage(Activity message)

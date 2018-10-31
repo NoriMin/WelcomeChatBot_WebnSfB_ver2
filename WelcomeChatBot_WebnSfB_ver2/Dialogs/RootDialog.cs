@@ -22,9 +22,11 @@ namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
         private const string SuggestMessage = @"こんにちは！
                                                 質問したいキーワードをスペース区切りで入力してください。
                                                 入力例: リシテア 締め";
+
         public Task StartAsync(IDialogContext context)
         {
             context.Wait(HelloMessage);
+            //context.Wait(MessageReceivedAsync);
 
             return Task.CompletedTask;
         }
