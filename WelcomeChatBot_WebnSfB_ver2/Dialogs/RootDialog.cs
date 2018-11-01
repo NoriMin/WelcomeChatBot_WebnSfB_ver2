@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Microsoft.Bot.Builder.Dialogs;
@@ -7,7 +9,7 @@ using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WelcomeChatBot_WebnSfB_ver2.Models;
-using System.Linq;
+
 
 namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
 {
@@ -234,7 +236,7 @@ namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
         private async Task InputMessage(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             /* Use below code when you want to trace logs partly */
-            /* Then delete code of Line.27 in Global.assax.cs */
+            /* Then comment out code of Line.27 in Global.assax.cs */
 
             //var activity = context.Activity as Microsoft.Bot.Connector.Activity;
             //Trace.TraceInformation($"{activity.Text}");
