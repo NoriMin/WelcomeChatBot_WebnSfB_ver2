@@ -27,7 +27,6 @@ namespace WelcomeChatBot_WebnSfB_ver2
 
                     builder.RegisterType<Microsoft.Bot.Builder.History.TraceActivityLogger>().AsImplementedInterfaces().InstancePerDependency(); // All Logs Collector (JSON)
 
-
                 });
 
             GlobalConfiguration.Configure(WebApiConfig.Register);

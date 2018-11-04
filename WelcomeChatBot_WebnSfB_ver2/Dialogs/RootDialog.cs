@@ -28,7 +28,6 @@ namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
         public Task StartAsync(IDialogContext context)
         {
             context.Wait(HelloMessage);
-            //context.Wait(MessageReceivedAsync);
 
             return Task.CompletedTask;
         }
@@ -222,7 +221,6 @@ namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
             {
                 await context.PostAsync("ご利用ありがとうございました。またご利用の際はお声がけください。");
 
-                //await HelloMessage(context);
                 await StartAsync(context);
             }
             else if (convert == "2")
@@ -243,7 +241,6 @@ namespace WelcomeChatBot_WebnSfB_ver2.Dialogs
 
             await context.PostAsync("フィードバックありがとうございます。またご利用の際はお声がけください。");
 
-            //await HelloMessage(context);
             await StartAsync(context);
 
         }
